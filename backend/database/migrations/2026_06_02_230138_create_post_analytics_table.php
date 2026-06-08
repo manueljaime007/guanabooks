@@ -28,7 +28,6 @@ return new class extends Migration
             $table->string('user_agent')->nullable();
             $table->timestamp('viewed_at')->default(DB::raw('CURRENT_TIMESTAMP'));
 
-            // Para análises de performance
             $table->index('post_id');
             $table->index('user_id');
             $table->index('viewed_at');
