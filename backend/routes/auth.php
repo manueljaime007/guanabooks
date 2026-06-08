@@ -1,0 +1,47 @@
+<?php
+
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Auth\GoogleLoginController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use Illuminate\Support\Facades\Route;
+
+
+Route::prefix('v1')->group(function () {
+    Route::prefix('auth')->group(function () {
+        Route::post('/register', [RegisterController::class, 'store'])
+            ->middleware('guest')
+            ->name('register');
+
+        Route::post('/login', [LoginController::class, 'store'])
+            ->middleware('guest')
+            ->name('login');
+
+        Route::post('/google', [GoogleLoginController::class, 'store'])
+            ->middleware('guest')
+            ->name('google.login');
+
+        Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+            ->middleware('guest')
+            ->name('password.email');
+
+        Route::post('/reset-password', [NewPasswordController::class, 'store'])
+            ->middleware('guest')
+            ->name('password.store');
+
+        Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
+            ->middleware(['auth:sanctum', 'signed', 'throttle:6,1'])
+            ->name('verification.verify');
+
+        Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+            ->middleware(['auth:sanctum', 'throttle:6,1'])
+            ->name('verification.send');
+
+        Route::post('/logout', [LoginController::class, 'destroy'])
+            ->middleware('auth:sanctum')
+            ->name('logout');
+    });
+});
