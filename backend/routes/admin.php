@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('v1')->group(function () {
-    Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
-        Route::apiResource('posts', AdminPostController::class)->except(['show']);
+    Route::middleware(['auth:sanctum', 'can:admin'])->prefix('admin')->group(function () {
+        Route::apiResource('posts', AdminPostController::class);
         Route::apiResource('books', BookController::class)->except(['show']);
         Route::apiResource('post-categories', PostCategoryController::class);
         Route::apiResource('book-categories', BookCategoryController::class);
