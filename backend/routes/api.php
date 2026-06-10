@@ -1,10 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\BookController;
-use App\Http\Controllers\Api\PostController;
-use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\Api\BookCategoryController;
 use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\PostCategoryController;
 use App\Http\Controllers\Api\TagController;
 use Illuminate\Http\Request;

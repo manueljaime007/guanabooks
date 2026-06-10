@@ -27,34 +27,10 @@ class PostController extends Controller
     }
 
     public function show(Post $post)
-    // {
-    //     return new PostResource($post);
-    // }
     {
-        try {
-
-            $user = request()->user();
-
-            abort_if(
-                Auth::id() != $post->user_id,
-                403,
-                'Acess Forbidden'
-            );
-
-            return response()->json(
-                [
-                    "message" => "Post",
-                    "data" => new PostResource($post)
-                ]
-            );
-        } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Erro ao mostrar post',
-                'error' => $th->getMessage()
-
-            ], 500);
-        }
+        return new PostResource($post);
     }
+
 
     public function update(StorePostRequest $request, Post $post)
     {
