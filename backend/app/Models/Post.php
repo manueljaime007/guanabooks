@@ -27,6 +27,9 @@ class Post extends Model
 {
     use HasUlids, SoftDeletes;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     public function author()
     {
         return $this->belongsTo(User::class, 'user_id');
