@@ -30,6 +30,13 @@ class Post extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
+    // Route Model Binding customizado
+    public function getRouteKeyName()
+    {
+        return 'slug'; // Usa slug em vez de id
+    }
+
+
     public function author()
     {
         return $this->belongsTo(User::class, 'user_id');

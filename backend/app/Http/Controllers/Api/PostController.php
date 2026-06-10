@@ -16,7 +16,6 @@ class PostController extends Controller
     {
         $posts = PostResource::collection(Post::all());
         return response()->json([
-            'message' => 'Listing $posts',
             'data' => $posts,
         ]);
     }
@@ -26,9 +25,12 @@ class PostController extends Controller
         //
     }
 
-    public function show(Post $post)
+    public function show(String $slug)
     {
-        return new PostResource($post);
+        $post = Post::where('slug', $slug)->firstOrFail();
+        return response()->json([
+            'data' => new PostResource($post)
+        ]);
     }
 
 
@@ -39,7 +41,7 @@ class PostController extends Controller
         $post->update($data);
 
         return response()->json([
-            "message" => "Post updated sucessfully!",
+            // "message" => "Post updated sucessfully!",
             "data" => $data
         ], 200);
     }

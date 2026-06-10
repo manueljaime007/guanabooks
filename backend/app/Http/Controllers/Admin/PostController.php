@@ -27,9 +27,12 @@ class PostController extends Controller
         ], 201);
     }
 
-    public function show(Post $post)
+    public function show(String $slug)
     {
-        return new PostResource($post);
+        $post = Post::where('slug', $slug)->firstOrFail();
+        return response()->json([
+            'data' => new PostResource($post)
+        ]);
     }
 
 
