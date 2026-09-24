@@ -3,97 +3,40 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PostResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'slug' => Str::slug($this->title),
+            'slug' => $this->slug,
             'resume' => $this->resume,
             'content' => $this->content,
-            'thumbnail_url' => $this->thumbnail_url,
+            'thumbnail_url' => $this->thumbnail_url
+                ? asset('storage/' . $this->thumbnail_url)
+                : null,
             'reading_time' => $this->reading_time,
             'views' => $this->views,
             'shares' => $this->shares,
             'status' => $this->status,
             'is_highlight' => $this->is_highlight,
-            // 'published_at' => $this->published_at->isoFormat('DD-MM-YYYY h:m:s'),
-            'published_at' => $this->published_at->format('d/m/Y H:i'),
-            // 'updated_at' => $this->updated_at->isoFormat('DD-MM-YYYY h:m:s'),
+
+            'published_at' => $this->published_at?->format('d/m/Y H:i'),
             'updated_at' => $this->updated_at->format('d/m/Y H:i'),
+
             'author' => new UserResource($this->whenLoaded('author')),
+            'category' => new PostCategoryResource($this->whenLoaded('category')),
+            'tags' => TagResource::collection($this->whenLoaded('tags')),
+
+            // Usando withCount (mais eficiente)
+            'likes' => $this->when(isset($this->likes_count), $this->likes_count, 0),
+            'comments' => $this->when(isset($this->comments_count), $this->comments_count, 0),
+
             'user_id' => $this->user_id,
             'post_category_id' => $this->post_category_id,
         ];
     }
 }
-
-
-/*
-'id'
-'user_id'
-
-'post_category_id
-
-'title'
-slug
-'resume'
-'content'
-
-'thumbnail_url'
-
-'reading_time'
-'views'
-'shares'
-'status'
-'is_highlight'
-published_at
-
-*/
-
-
-/**
-
-
-Perguntas sobre Laravel
-
-1. O que são scopes e como usar?
-2. Quando usar:
-
- protected $casts = ['published_at' => 'datetime','is_highlight' => 'boolean',];
-
-    e quando usar:
-
-    protected function casts(): array
-    {
-        return ['email_verified_at' => 'datetime',  'password' => 'hashed', ];
-    }
-
-    3. como preencher isso?
-    class PostCategoryController extends Controller
-    {
-
-    public function index()
-    {
-        try {
-            $postCategories = PostCategory::all();
-            return response()->json([
-                'postCategories' => $postCategories
-            ]);
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-    }
-
-    public function store(Request $request){}
- */

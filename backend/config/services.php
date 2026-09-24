@@ -35,4 +35,25 @@ return [
         ],
     ],
 
+    'imagekit' => [
+        'public_key'   => env('IMAGEKIT_PUBLIC_KEY'),
+        'private_key'  => env('IMAGEKIT_PRIVATE_KEY'),
+        'url_endpoint' => env('IMAGEKIT_URL_ENDPOINT'),
+    ],
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        // 'redirect' => env('GOOGLE_REDIRECT_URI'),
+        'redirect' => env('GOOGLE_REDIRECT_URI_CLIENT'),
+        'redirect_admin' => env('GOOGLE_REDIRECT_URI_ADMIN'),
+    ],
+
+
+    'github' => [
+        'client_id' => env('GITHUB_CLIENT_ID'),
+        'client_secret' => env('GITHUB_CLIENT_SECRET'),
+        'redirect' => env('GITHUB_REDIRECT_URI_CLIENT'),
+        'redirect_admin' => env('GITHUB_REDIRECT_URI_ADMIN'),
+    ],
 ];

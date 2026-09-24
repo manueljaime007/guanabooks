@@ -17,18 +17,28 @@ Route::prefix('v1')->group(function () {
         ]);
     });
 
-    // Public Routes
-    Route::apiResource('posts', PostController::class)->only(['index', 'show']);
-    Route::apiResource('books', BookController::class)->only(['index', 'show']);
-    Route::apiResource('post-categories', PostCategoryController::class)->only(['index']);
-    Route::apiResource('book-categories', BookCategoryController::class)->only(['index']);
-    Route::apiResource('tags', TagController::class);
+    Route::get('posts/{slug}', [PostController::class, 'show'])
+        ->where('slug', '[a-z0-9\-]+')
+        ->name('posts.show');
 
-    // Post Actions (Public)
+
     Route::post('posts/{post}/like', [PostController::class, 'like']);
     Route::post('posts/{post}/unlike', [PostController::class, 'unlike']);
-    Route::post('posts/{post}/share', [PostController::class, 'share']);
-    Route::get('posts/{post}/analytics', [PostController::class, 'analytics']);
+
+    Route::apiResource('post-categories', PostCategoryController::class)->only(['index']);
+    Route::apiResource('book-categories', BookCategoryController::class)->only(['index']);
+
+    // Index apenas (sem show - já está acima)
+    Route::apiResource('posts', PostController::class)
+        ->only(['index']);
+
+    Route::apiResource('books', BookController::class)->only(['index', 'show']);
+    // Route::apiResource('tags', TagController::class);
+
+    // Post Actions (Public)
+
+    // Route::post('posts/{post}/share', [PostController::class, 'share']);
+    // Route::get('posts/{post}/analytics', [PostController::class, 'analytics']);
 
     // Book Actions (Public)
     Route::post('books/{book}/favorite', [BookController::class, 'favorite']);
@@ -36,9 +46,11 @@ Route::prefix('v1')->group(function () {
     Route::post('books/{book}/download', [BookController::class, 'download']);
     Route::post('books/{book}/share', [BookController::class, 'share']);
 
+    Route::apiResource('tags', TagController::class)->only(['index']);
+
     // Comments (Public)
-    Route::post('posts/{post}/comments', [CommentController::class, 'store']);
-    Route::apiResource('comments', CommentController::class)->only(['destroy']);
+    // Route::post('posts/{post}/comments', [CommentController::class, 'store']);
+    // Route::apiResource('comments', CommentController::class)->only(['destroy']);
 });
 
 require __DIR__ . '/auth.php';

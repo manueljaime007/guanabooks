@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 #[Fillable([
     'user_id',
@@ -33,7 +34,7 @@ class Post extends Model
     // Route Model Binding customizado
     public function getRouteKeyName()
     {
-        return 'slug'; // Usa slug em vez de id
+        return 'slug';
     }
 
 
@@ -54,7 +55,12 @@ class Post extends Model
 
     public function likes()
     {
-        return $this->hasMany(PostLike::class);
+        return $this->belongsToMany(User::class, 'post_likes');
+    }
+
+    public function likesCount()
+    {
+        return $this->likes()->count();
     }
 
     public function comments()
@@ -103,4 +109,21 @@ class Post extends Model
         'published_at' => 'datetime',
         'is_highlight' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function ($post) {
+
+            if (empty($post->slug)) {
+
+                $slug = Str::slug($post->title);
+
+                $count = static::where('slug', 'like', "{$slug}%")->count();
+
+                $post->slug = $count
+                    ? "{$slug}-" . ($count + 1)
+                    : $slug;
+            }
+        });
+    }
 }

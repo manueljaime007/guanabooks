@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'resume',
     'thumbnail_url',
     'pdf_url',
-    'reading_time',
     'status',
     'is_highlight',
     'published_at'

@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 #[Fillable([
     'name',
     'slug',
-    'description'
+    'description',
+    'icon_url'
 ])]
 class BookCategory extends Model
 {

@@ -12,7 +12,7 @@ class UpdateBookRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,30 @@ class UpdateBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => [
+                'string',
+                'max:255'
+            ],
+            'resume' => [
+                'string'
+            ],
+            'pdf' => [
+                'nullable',
+                'file',
+                'mimes:pdf',
+                'max:51200'
+            ],
+            'thumbnail' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,webp',
+                'max:5120'
+            ],
+            'status' => [
+                'in:draft',
+                'published',
+                'archived'
+            ],
         ];
     }
 }

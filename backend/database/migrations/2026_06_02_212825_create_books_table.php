@@ -6,19 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('books', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')
-            ->constrained('users')
-            ->onDelete('cascade');
+                ->constrained('users')
+                ->onDelete('cascade');
             $table->foreignUuid('book_category_id')
-            ->constrained('book_categories')
-            ->onDelete('restrict');
+                ->constrained('book_categories')
+                ->onDelete('restrict');
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('resume');

@@ -12,14 +12,15 @@ return new class extends Migration
             $table->uuid('id')->primary();
 
             $table->foreignUuid('post_id')
-                ->on('posts')
+                ->constrained('posts')
                 ->onDelete('cascade');
 
             $table->foreignUuid('tag_id')
-                ->on('tags')
+                ->constrained('tags')
                 ->onDelete('cascade');
 
             $table->unique(['post_id', 'tag_id']);
+            $table->timestamps();
         });
     }
 

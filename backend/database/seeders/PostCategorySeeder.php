@@ -16,25 +16,26 @@ class PostCategorySeeder extends Seeder
      */
     public function run(): void
     {
+
         DB::table('post_categories')->insert([
             [
-                'id' => Str::uuid(),
+                'id' => '11111111-1111-1111-1111-111111111111', // ID fixo
                 'name' => 'Programação Web',
                 'slug' => Str::slug('Programação Web'),
-                'description' => 'Tudo sobre programação mobile',
+                'description' => 'Tudo sobre programação web', // ✅ Corrigi a descrição
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'id' => Str::uuid(),
-                'name' => 'UI/UX Desing',
-                'slug' => Str::slug('UI/UX Desing'),
-                'description' => 'Tudo sobre UI/UX Desing',
+                'id' => '22222222-2222-2222-2222-222222222222', // ID fixo
+                'name' => 'UI/UX Design', // ✅ Corrigi o typo (Design, não Desing)
+                'slug' => Str::slug('UI/UX Design'),
+                'description' => 'Tudo sobre UI/UX Design',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'id' => Str::uuid(),
+                'id' => '33333333-3333-3333-3333-333333333333', // ID fixo
                 'name' => 'Desenvolvimento Mobile',
                 'slug' => Str::slug('Desenvolvimento Mobile'),
                 'description' => 'Tudo sobre desenvolvimento mobile',
