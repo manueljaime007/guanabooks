@@ -1,11 +1,4 @@
 {
-  "compilerOptions": {
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    }
-  },
   // https://nuxt.com/docs/guide/concepts/typescript
   "files": [],
   "references": [

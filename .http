@@ -1,0 +1,177 @@
+### Variáveis de Ambiente
+@baseUrl = http://127.0.0.1:9010/api/v1
+@email = admin123@gmail.com
+@password = 12345678
+@nomeAdmin = admin
+
+### 1. Criar Admin (Sign Up) - só roda uma vez
+# @name signup
+POST {{baseUrl}}/admin
+Content-Type: application/json
+
+{
+  "nome": "{{nomeAdmin}}",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+###
+
+### 2. Fazer Login (obrigatório antes de rotas protegidas)
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Capturar token da resposta
+# @authToken = {{login.response.body.access_token}}
+@authToken = {{login.response.body.token_data.plainTextToken}}
+
+###
+
+### 3. Checar admin logado (GET /auth/me)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{authToken}}
+### 3. Checar admin logado (GET /auth/me)
+
+
+GET {{baseUrl}}/admin/posts
+Authorization: Bearer {{authToken}}
+
+###
+
+GET {{baseUrl}}/admin/books
+Authorization: Bearer {{authToken}}
+
+###
+
+### 4. Criar Categoria com Thumbnail (multipart/form-data)
+# @name create-categoria
+POST {{baseUrl}}/categorias
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+
+###
+
+GET {{baseUrl}}/posts
+
+
+
+
+### 4. Criar Categoria com Thumbnail (multipart/form-data)
+# @name create-categoria
+POST {{baseUrl}}/admin/posts
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "post_category_id": "2877e70a-de23-4cd0-ae5b-d6ef2fad81f5",
+  "title": "Meu primeiro projecto sério",
+  "resume": "Ainda lembro da primeira vez que fiz o meu projecto",
+  "content": "Ainda lembro da primeira vez que fiz o meu projecto e bla bla bla"
+
+}
+
+----WebKitFormBoundary
+Content-Disposition: form-data; name="nome"
+
+Respiração para Ansiedade
+----WebKitFormBoundary
+Content-Disposition: form-data; name="descricao"
+
+Exercícios simples para reduzir ansiedade no momento.
+----WebKitFormBoundary
+Content-Disposition: form-data; name="thumbnail"; filename="respiracao.jpg"
+Content-Type: image/jpeg
+
+< selecione um arquivo .jpg no Postman ou Insomnia >
+----WebKitFormBoundary--
+
+### Capturar ID da categoria criada
+@categoriaId = {{create-categoria.response.body.id}}
+
+###
+
+### 5. Listar todas as categorias (ver contagem de exercícios)
+GET {{baseUrl}}/categorias
+Authorization: Bearer {{authToken}}
+
+###
+
+### 6. Criar Exercício (sem categoria ainda)
+# @name create-exercicio
+POST {{baseUrl}}/exercicios
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "titulo": "Respiração 4-7-8",
+  "tipo": "respiração",
+  "descricao": "Técnica para acalmar o sistema nervoso",
+  "duracao": 300,
+  "nivel": "iniciante",
+  "dicas": ["Foque na barriga", "Não force", "Repita 4 vezes"]
+}
+
+### Capturar ID do exercício criado
+@exercicioId = {{create-exercicio.response.body.id}}
+
+###
+
+### 7. Listar todos os exercícios
+GET {{baseUrl}}/exercicios
+Authorization: Bearer {{authToken}}
+
+###
+
+### 8. Criar Passo 1 do exercício
+# @name create-passo-1
+POST {{baseUrl}}/exercicio-passos
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "exercicioId": "{{exercicioId}}",
+  "tipo": "breathing",
+  "instrucoes": "Inspire devagar contando até 4",
+  "duracao": 4,
+  "dica": "Sinta o ar entrando nos pulmões"
+}
+
+###
+
+### 9. Criar Passo 2 (pausa)
+POST {{baseUrl}}/exercicio-passos
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "exercicioId": "{{exercicioId}}",
+  "tipo": "pausa",
+  "instrucoes": "Segure o ar",
+  "duracao": 7,
+  "dica": "Fique calmo"
+}
+
+###
+
+### 10. Listar passos de um exercício específico
+GET {{baseUrl}}/exercicio-passos/exercicio/{{exercicioId}}
+Authorization: Bearer {{authToken}}
+
+###
+
+### 11. Teste de erro: tentar criar categoria sem ser admin
+POST {{baseUrl}}/categorias
+Content-Type: application/json
+
+{
+  "nome": "Teste"
+}
+
+### Deve dar 401 ou 403
