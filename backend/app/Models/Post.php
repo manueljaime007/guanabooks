@@ -2,50 +2,68 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Model;
+use App\Enums\ContentStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 #[Fillable([
-    'user_id',
+    'admin_id',
     'post_category_id',
     'title',
     'slug',
     'resume',
-    'content',
-    'thumbnail_url',
+    'thumbnail_media_id',
     'reading_time',
+    'views',
+    'shares',
     'status',
     'is_highlight',
-    'published_at'
+    'published_at',
 ])]
-
-
 class Post extends Model
 {
     use HasUuids, SoftDeletes;
 
     protected $keyType = 'string';
+
     public $incrementing = false;
 
-    // Route Model Binding customizado
+    protected function casts(): array
+    {
+        return [
+            'status' => ContentStatus::class,
+            'is_highlight' => 'boolean',
+            'published_at' => 'datetime',
+        ];
+    }
+
     public function getRouteKeyName()
     {
         return 'slug';
     }
 
-
-    public function author()
+    public function admin()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Admin::class);
     }
 
     public function category()
     {
         return $this->belongsTo(PostCategory::class, 'post_category_id');
+    }
+
+    public function thumbnail()
+    {
+        return $this->belongsTo(Media::class, 'thumbnail_media_id');
+    }
+
+    public function blocks()
+    {
+        return $this->hasMany(PostBlock::class)
+            ->orderBy('position');
     }
 
     public function tags()
@@ -55,12 +73,7 @@ class Post extends Model
 
     public function likes()
     {
-        return $this->belongsToMany(User::class, 'post_likes');
-    }
-
-    public function likesCount()
-    {
-        return $this->likes()->count();
+        return $this->hasMany(PostLike::class);
     }
 
     public function comments()
@@ -75,7 +88,8 @@ class Post extends Model
 
     public function scopePublished($query)
     {
-        return $query->where('status', 'published')
+        return $query
+            ->where('status', ContentStatus::PUBLISHED)
             ->whereNotNull('published_at');
     }
 
@@ -84,45 +98,38 @@ class Post extends Model
         return $query->where('is_highlight', true);
     }
 
-    public function scopeByCategory($query, String $categoryId)
+    public function scopeByCategory($query, string $categoryId)
     {
         return $query->where('post_category_id', $categoryId);
     }
 
-    // Métodos auxiliares
-    public function likedByUser(String $userId)
+    public function likedByUser(string $userId): bool
     {
-        return $this->likes()->where('user_id', $userId)->exists();
+        return $this->likes()
+            ->where('user_id', $userId)
+            ->exists();
     }
 
-    public function incrementViews()
+    public function likesCount(): int
+    {
+        return $this->likes()->count();
+    }
+
+    public function incrementViews(): void
     {
         $this->increment('views');
     }
 
-    public function incrementShares()
+    public function incrementShares(): void
     {
         $this->increment('shares');
     }
 
-    protected $casts = [
-        'published_at' => 'datetime',
-        'is_highlight' => 'boolean',
-    ];
-
     protected static function booted(): void
     {
-        static::creating(function ($post) {
-
+        static::creating(function (Post $post) {
             if (empty($post->slug)) {
-
-                $slug = Str::slug($post->title);
-
-                $count = static::where('slug', 'like', "{$slug}%")->count();
-
-                $post->slug = $count
-                    ? "{$slug}-" . ($count + 1)
-                    : $slug;
+                $post->slug = Str::slug($post->title);
             }
         });
     }

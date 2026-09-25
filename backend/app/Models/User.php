@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
-use Dom\Comment;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -18,29 +16,27 @@ use Laravel\Sanctum\HasApiTokens;
     'email',
     'password',
     'google_id',
+    'github_id',
     'avatar_url',
-    'role',
-    'bio'
+    'email_verified_at',
+    'last_login_at',
 ])]
-
 #[Hidden([
     'password',
-    'remember_token'
+    'remember_token',
 ])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasUuids, HasApiTokens;
 
-
-    public function posts()
+    protected function casts(): array
     {
-        return $this->hasMany(Post::class);
-    }
-
-    public function books()
-    {
-        return $this->hasMany(Book::class);
+        return [
+            'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 
     public function postLikes()
@@ -48,7 +44,7 @@ class User extends Authenticatable
         return $this->hasMany(PostLike::class);
     }
 
-    public function bookFavorite()
+    public function bookFavorites()
     {
         return $this->hasMany(BookFavorite::class);
     }
@@ -58,26 +54,8 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    public function isAdmin()
+    public function postAnalytics()
     {
-        return $this->role === 'admin';
-    }
-
-    public function isModerator()
-    {
-        return $this->role === 'moderator';
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(PostAnalytic::class);
     }
 }
