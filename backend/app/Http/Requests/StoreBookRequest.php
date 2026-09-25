@@ -23,46 +23,14 @@ class StoreBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => [
-                'required',
-                'string',
-                'max:255'
-            ],
-            'slug' => [
-                'required',
-                'string',
-                'unique:books'
-            ],
-            'resume' => [
-                'required',
-                'string'
-            ],
-            'book_category_id' => [
-                'required',
-                'uuid',
-                'exists:book_categories,id'
-            ],
-            'pdf' => [
-                'required',
-                'file',
-                'mimes:pdf',
-                'max:51200'
-            ],
-            'thumbnail' => [
-                'nullable',
-                'image',
-                'mimes:jpeg,png,webp',
-                'max:5120'
-            ],
-            'cover' => [
-                'nullable',
-                'image',
-                'mimes:jpeg,png,webp',
-                'max:10240'
-            ],
-            'status' => [
-                'in:draft,published,archived'
-            ],
+            'title' => 'required|string|max:255',
+            'slug' => 'required|string|unique:books',
+            'resume' => 'required|string',
+            'book_category_id' => 'required|uuid|exists:book_categories,id',
+            'pdf' => 'required|file|mimes:pdf|max:51200',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,webp|max:5120',
+            'cover' => 'nullable|image|mimes:jpeg,png,webp|max:10240',
+            'status' => 'in:draft,published,archived',
         ];
     }
 }
