@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'name',
     'slug',
     'description',
-    'icon_url'
+    'icon_url',
 ])]
 class PostCategory extends Model
 {
@@ -22,8 +22,8 @@ class PostCategory extends Model
         return $this->hasMany(Post::class);
     }
 
-    public function scopeWithBookCount($query)
+    public function scopeWithPostCount($query)
     {
-        return $query->withCount('books');
+        return $query->withCount('posts');
     }
 }

@@ -2,40 +2,62 @@
 
 namespace App\Models;
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
-    'user_id',
+    'admin_id',
     'book_category_id',
     'title',
     'slug',
     'resume',
-    'thumbnail_url',
-    'pdf_url',
+    'thumbnail_media_id',
+    'pdf_media_id',
+    'reading_time',
+    'downloads',
+    'shares',
     'status',
     'is_highlight',
-    'published_at'
+    'published_at',
 ])]
 class Book extends Model
 {
-    use HasUlids, SoftDeletes;
+    use HasUuids, SoftDeletes;
 
-    protected $casts = [
-        'published_at' => 'datetime',
-        'is_highlight' => 'boolean'
-    ];
+    protected $keyType = 'string';
 
-    public function author()
+    public $incrementing = false;
+
+    protected function casts(): array
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return [
+            'status' => ContentStatus::class,
+            'published_at' => 'datetime',
+            'is_highlight' => 'boolean',
+        ];
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
     }
 
     public function category()
     {
         return $this->belongsTo(BookCategory::class, 'book_category_id');
+    }
+
+    public function thumbnail()
+    {
+        return $this->belongsTo(Media::class, 'thumbnail_media_id');
+    }
+
+    public function pdf()
+    {
+        return $this->belongsTo(Media::class, 'pdf_media_id');
     }
 
     public function tags()
@@ -48,10 +70,10 @@ class Book extends Model
         return $this->hasMany(BookFavorite::class);
     }
 
-    // Scopes
     public function scopePublished($query)
     {
-        return $query->where('status', 'published')
+        return $query
+            ->where('status', ContentStatus::PUBLISHED)
             ->whereNotNull('published_at');
     }
 
@@ -60,23 +82,24 @@ class Book extends Model
         return $query->where('is_highlight', true);
     }
 
-    public function scopeByCategory($query, String $categoryId)
+    public function scopeByCategory($query, string $categoryId)
     {
         return $query->where('book_category_id', $categoryId);
     }
 
-    // Métodos auxiliares
-    public function isFavoriteByUser(String $userId)
+    public function isFavoriteByUser(string $userId): bool
     {
-        return $this->favorites()->where('user_id', $userId)->exists();
+        return $this->favorites()
+            ->where('user_id', $userId)
+            ->exists();
     }
 
-    public function incrementDownloads()
+    public function incrementDownloads(): void
     {
         $this->increment('downloads');
     }
 
-    public function incrementShares()
+    public function incrementShares(): void
     {
         $this->increment('shares');
     }
