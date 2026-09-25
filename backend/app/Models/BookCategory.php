@@ -3,18 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
     'name',
     'slug',
     'description',
-    'icon_url'
+    'icon_url',
 ])]
 class BookCategory extends Model
 {
-    use HasUlids;
+    use HasUuids, SoftDeletes;
 
     public function books()
     {

@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['name', 'slug'])]
+#[Fillable([
+    'name',
+    'slug',
+])]
 class Tag extends Model
 {
-    use HasUuids, SoftDeletes;
+    use HasUuids;
 
     public function posts()
     {
