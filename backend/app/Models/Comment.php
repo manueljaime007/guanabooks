@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CommentStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -11,11 +12,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'user_id',
     'post_id',
     'content',
-    'status'
+    'status',
 ])]
 class Comment extends Model
 {
     use HasUuids, SoftDeletes;
+
+    protected function casts(): array
+    {
+        return [
+            'status' => CommentStatus::class,
+        ];
+    }
 
     public function user()
     {
@@ -29,11 +37,11 @@ class Comment extends Model
 
     public function scopeApproved($query)
     {
-        return $query->where('status', 'approved');
+        return $query->where('status', CommentStatus::APPROVED);
     }
 
     public function scopePending($query)
     {
-        return $query->where('status', 'pending');
+        return $query->where('status', CommentStatus::PENDING);
     }
 }
